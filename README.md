@@ -6,9 +6,9 @@ For more info see: https://support.anewspring.com/en/articles/70410-api-introduc
 
 ## It is not possible to use the aNewSpring API to:
 
-- delete a role: `deleteUserRoles`
-- delete the date of birth: `updateUser => dateOfBirth`
-- see which groups a user is a member of: `getUser => groups`
-- request information from a group: `getGroup` and `getGroups`
-- quickly update all facilitator/participant relationships: `getTeacherStudents`
-- request permissions of a course: `getCoursePermissions`
+1. delete a role: `deleteUserRoles`
+2. delete the date of birth: `updateUser => dateOfBirth`
+3. see which groups a user is a member of: `getUser => groups`
+4. request information from a group: `getGroup` and `getGroups`
+5. quickly update all facilitator/participant relationships: `getTeacherStudents`
+6. request permissions of a course: `getCoursePermissions`
