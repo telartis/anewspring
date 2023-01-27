@@ -5,8 +5,8 @@
  * File:        libbase/anewspring.php
  * @author      Jeroen de Jong <jeroen@telartis.nl>
  * @copyright   2021 Telartis BV
- *
- * https://demo.anewspring.nl/apidocs - api version: 5.3.6
+ * @link        https://demo.anewspring.nl/apidocs
+ * @version     5.3.6
  *
  *
  * Usage:
