@@ -40,6 +40,7 @@
  * updateUser(int $uid, array $user): int http_code
  * addOrUpdateUser(int $uid, array $user): int http_code
  * addUserRoles(int $uid, array $roles, bool $ignoreDuplicates = true): int http_code
+ * deleteUserRoles(int $uid, array $roles): int http_code (TBD: this API-function does not exist)
  * deleteUser(int $uid): int http_code
  *
  * *** groups : (User) group management ***
@@ -69,6 +70,7 @@
  * getStudentSubscriptions(string $courseID, bool $skipStats = true, string $column = 'id|array|count'): mixed
  * getStudentTeachers(int $studentID, string $courseID, bool $excludeTeacherGroups = false, string $column = 'id|array'): array
  * getTeacherStudents(int $teacherID, string $courseID, string $column = 'id|array'): array
+ * getCoursePermissions(string $courseID, int $teacherID): array (TBD: this API-function does not exist)
  * setCoursePermissions(string $courseID, int $teacherID, array $permission, bool $unset = false): int
  * addTeacherStudents(string $courseID, int $teacherID, array $students, bool $ignoreDuplicates = true): int http_code
  * deleteTeacherStudents(string $courseID, int $teacherID, array $students, bool $ignoreMissing = true): int http_code
@@ -252,7 +254,7 @@ class anewspring
             $path,
             ($data_count ? $data_count.':' : '').$data_string,
             $this->http_code,
-            $val, // result value
+            $val // result value
         );
 
         if (!empty($this->log_file)) {
@@ -517,6 +519,10 @@ class anewspring
     /**
      * Get user
      *
+     * TBD: It is not possible to see which groups a user is a member of.
+     * Add extra groups field. This field is similar to the roles field,
+     * but returns all groups that a user is a member of in an array.
+     *
      * @param  integer  $uid         User ID
      * @param  boolean  $add_groups  Optional, default TRUE
      * @return array(id,uid,login,email,title,firstName,middleName,lastName,initials,gender,company,function,
@@ -575,6 +581,7 @@ class anewspring
      * 200 success
      * 409 a user with the specified ID already exists | setting force password change is not allowed | user is archived
      *
+     *
      * @param  integer  $uid   User ID
      * @param  array    $user  User Row
      * @return integer  HTTP Code
@@ -591,6 +598,9 @@ class anewspring
      *
      * 200 success
      * 409 a user with the specified ID already exists | setting force password change is not allowed | user is archived
+     *
+     * TBD: It is not possible to delete the date of birth.
+     * If a dateOfBirth field is empty or NULL or 0000-00-00, remove the date of birth.
      *
      * @param  integer  $uid   User ID
      * @param  array    $user  User Row
@@ -650,6 +660,22 @@ class anewspring
         return $this->query('POST', "addUserRoles/$uid", 'http_code', [
             'role'             => $roles,
             'ignoreDuplicates' => $ignoreDuplicates,
+        ]);
+    }
+
+    /**
+     * Delete user roles
+     *
+     * TBD: this API-function does not exist
+     *
+     * @param  integer  $uid    User ID
+     * @param  array    $roles  See addUserRoles
+     * @return integer  HTTP Code
+     */
+    public function deleteUserRoles(int $uid, array $roles): int
+    {
+        return $this->query('POST', "deleteUserRoles/$uid", 'http_code', [
+            'role' => $roles,
         ]);
     }
 
@@ -1046,6 +1072,21 @@ class anewspring
     }
 
     /**
+     * Get course permissions
+     *
+     * TBD: this API-function does not exist
+     *
+     * @param  string   $courseID    The ID of the course in the external system, which is shown as external ID in the platform.
+     *                               This parameter could occur multiple times.
+     * @param  integer  $teacherID   The ID of the teacher in the external system, which is shown as external ID in the platform.
+     * @return array    Permission array
+     */
+    public function getCoursePermissions(string $courseID, int $teacherID): array
+    {
+        return $this->query('GET', "getCoursePermissions/$courseID/$teacherID", 'json:permission:array');
+    }
+
+    /**
      * Set course permissions
      * This can be used to set the course permissions for a specific teacher.
      *
@@ -1137,7 +1178,9 @@ class anewspring
      */
     public function is_mobile_app(): bool
     {
-        return strpos($_SERVER['HTTP_USER_AGENT'], 'aNewSpring/SA Leerplein/') !== false;
+        $user_agent = (string) filter_input(INPUT_SERVER, 'HTTP_USER_AGENT', FILTER_SANITIZE_STRING);
+
+        return strpos($user_agent, 'aNewSpring/SA Leerplein/') !== false;
     }
 
     /**
