@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
 /**
- * Project:     Telartis aNewSpring API Client
- * File:        /libbase/anewspring.php
+ * Project:     aNewSpring API Client
+ * File:        libbase/anewspring.php
  * @author      Jeroen de Jong <jeroen@telartis.nl>
  * @copyright   2021 Telartis BV
  *
@@ -10,7 +10,8 @@
  *
  *
  * Usage:
- * $anewspring = new \lib\anewspring();
+ * $anewspring = new \libbase\anewspring();
+ * $user = $anewspring->getUser($uid);
  *
  *
  * //////////////// Functions ////////////////
