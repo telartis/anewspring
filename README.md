@@ -6,7 +6,7 @@ For more info see: https://support.anewspring.com/en/articles/70410-api-introduc
 
 ## It is not possible to use the aNewSpring API to:
 
-1. delete a role: `deleteUserRoles`
+1. delete a role: [`deleteUserRoles`](https://github.com/telartis/anewspring/blob/main/anewspring.php#L667)
 2. delete the date of birth: `updateUser => dateOfBirth`
 3. see which groups a user is a member of: `getUser => groups`
 4. request information from a group: `getGroup` and `getGroups`
