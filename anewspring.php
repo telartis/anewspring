@@ -91,7 +91,6 @@
  *
  */
 
-
 namespace libbase;
 
 class anewspring
@@ -99,6 +98,8 @@ class anewspring
     public $api_key  = '';
     public $base_url = 'https://demo.anewspring.nl/api';
     public $log_file = '/var/log/anewspring.log'; // leave empty if you do not want logging
+
+    public $mobile_user_agent = 'aNewSpring/APP_NAME/';
 
     public $error     = false;
     public $http_code = 0;
@@ -1172,7 +1173,7 @@ class anewspring
     /////////////////////////////////////////// Extra Functions ///////////////////////////////////////////
 
     /**
-     * Check User-Agent from super global $_SERVER and see if current user is from the aNewSpring/SA Leerplein-app
+     * Check User-Agent from super global $_SERVER and see if current user is in the mobile app
      *
      * @return boolean
      */
@@ -1180,7 +1181,7 @@ class anewspring
     {
         $user_agent = (string) filter_input(INPUT_SERVER, 'HTTP_USER_AGENT', FILTER_SANITIZE_STRING);
 
-        return strpos($user_agent, 'aNewSpring/SA Leerplein/') !== false;
+        return strpos($user_agent, $this->mobile_user_agent) !== false;
     }
 
     /**
