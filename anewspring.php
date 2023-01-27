@@ -2,7 +2,7 @@
 
 /**
  * Project:     aNewSpring API Client
- * File:        libbase/anewspring.php
+ * File:        /libbase/anewspring.php
  * @author      Jeroen de Jong <jeroen@telartis.nl>
  * @copyright   2021 Telartis BV
  * @link        https://demo.anewspring.nl/apidocs
