@@ -1,4 +1,4 @@
-# PHP client implementation for aNewSpring's API
+# PHP client implementation for aNewSpring API
 
 This PHP client makes it possible to manage users, user groups, single sign-on (sso) access codes, courses, course subscriptions and instance management.
 
