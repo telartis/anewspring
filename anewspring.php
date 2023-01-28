@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 /**
- * Project:     aNewSpring API Client
+ * Project:     aNewSpring API PHP Client
  * File:        anewspring.php
  * @author      Jeroen de Jong <jeroen@telartis.nl>
  * @copyright   2021 Telartis BV
