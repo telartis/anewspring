@@ -2,7 +2,7 @@
 
 /**
  * Project:     aNewSpring API Client
- * File:        /libbase/anewspring.php
+ * File:        anewspring.php
  * @author      Jeroen de Jong <jeroen@telartis.nl>
  * @copyright   2021 Telartis BV
  * @link        https://demo.anewspring.nl/apidocs
@@ -10,7 +10,7 @@
  *
  *
  * Usage:
- * $anewspring = new \libbase\anewspring();
+ * $anewspring = new \telartis\anewspring\anewspring();
  * $user = $anewspring->getUser($uid);
  *
  *
@@ -91,7 +91,7 @@
  *
  */
 
-namespace libbase;
+namespace telartis\anewspring;
 
 class anewspring
 {
@@ -308,7 +308,7 @@ class anewspring
     }
 
     /**
-     * Check class environment variables
+     * Check environment variables
      *
      * @return string
      */
@@ -494,7 +494,7 @@ class anewspring
             } else {
                 $name = $plural;
             }
-            $this->out(number_format($count, 0, ',', '.').' '.$name.' '.$info);
+            $this->out(number_format((float) $count, 0, ',', '.').' '.$name.' '.$info);
         }
     }
 
