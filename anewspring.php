@@ -22,7 +22,7 @@
  * clean_html(string $html): string
  * dbg($data, string $name = ''): string
  * hide_pass(string $text): string
- * mail_err($error, $content = ''): void
+ * mail_error($error, $content = ''): void
  * log_entry(string $method, string $path, string $data_string, int $http_code, string $msg): array
  * log_error(string $method, string $path, string $data_string, int $http_code, string $msg): void, Log error message to $this->error_log
  * out(string $msg): void, Echoed message or added to $this->output
@@ -164,7 +164,7 @@ class anewspring
 
         $errmsg = $this->check_environment();
         if (!empty($errmsg)) {
-            $this->mail_err('Error '.$path.' '.$errmsg);
+            $this->mail_error('Error '.$path.' '.$errmsg);
             $this->http_code = 500;
         } else {
             $url = $this->base_url.'/'.$path;
@@ -182,10 +182,10 @@ class anewspring
             $this->info = (object) curl_getinfo($ch);
             if ($result_string === false) {
                 $result_string = 'curl_exec error: '.curl_error($ch).' ('.curl_errno($ch).')';
-                $this->mail_err('Error '.$path.' '.$result_string, $this->dbg($this->info, 'curl_getinfo'));
+                $this->mail_error('Error '.$path.' '.$result_string, $this->dbg($this->info, 'curl_getinfo'));
             }
             $this->http_code = (int) $this->info->http_code;
-            // if ($this->http_code != 200) $this->mail_err('aNewSpring debug', $this->dbg($result_string, 'result_string')."\n".$this->dbg($this->info, 'curl_getinfo'));
+            // if ($this->http_code != 200) $this->mail_error('aNewSpring debug', $this->dbg($result_string, 'result_string')."\n".$this->dbg($this->info, 'curl_getinfo'));
         }
 
         if (!array_key_exists($this->http_code, $this->http_codes)) {
@@ -417,7 +417,7 @@ class anewspring
      * @param  string   $content  Optional, default ''
      * @return void
      */
-    public function mail_err($error, $content = ''): void
+    public function mail_error($error, $content = ''): void
     {
         if (false) mail('webmaster@example.com', $error, $content);
     }
