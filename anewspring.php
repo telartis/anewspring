@@ -4,7 +4,7 @@
  * Project:     aNewSpring API PHP Client
  * File:        anewspring.php
  * @author      Jeroen de Jong <jeroen@telartis.nl>
- * @copyright   2021 Telartis BV
+ * @copyright   2021-2023 Telartis BV
  * @link        https://demo.anewspring.nl/apidocs
  * @version     5.3.6
  *
@@ -600,8 +600,9 @@ class anewspring
      * 200 success
      * 409 a user with the specified ID already exists | setting force password change is not allowed | user is archived
      *
-     * TBD: It is not possible to delete the date of birth.
-     * If a dateOfBirth field is empty or NULL or 0000-00-00, remove the date of birth.
+     * TBD FIX BUG: It is not possible to set the dateOfBirth to NULL.
+     * The dateOfBirth can be empty and it is not required to have a value,
+     * but once it has gotten a value it is not optional anymore and cannot be set to NULL again.
      *
      * @param  integer  $uid   User ID
      * @param  array    $user  User Row
