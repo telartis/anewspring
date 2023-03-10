@@ -79,6 +79,7 @@
  * //////////////// Extra Functions ////////////////
  *
  * is_mobile_app(): bool
+ * user_fields(string $function = ''): array
  * user_status(int $uid): string 'active', 'inactive', 'nonexisting' or 'error'
  * user_has_started(int $uid): bool
  * all_groups(): array string groupIDs
@@ -589,7 +590,12 @@ class anewspring
      */
     public function addUser(int $uid, array $user): int
     {
-        unset($user['security']);
+        $fields = $this->user_fields('addUser');
+        foreach (array_keys($user) as $field) {
+            if (!in_array($field, $fields)) {
+                unset($user[$field]);
+            }
+        }
 
         return $this->query('POST', "addUser/$uid", 'http_code', $user);
     }
@@ -610,7 +616,12 @@ class anewspring
      */
     public function updateUser(int $uid, array $user): int
     {
-        unset($user['security']);
+        $fields = $this->user_fields('updateUser');
+        foreach (array_keys($user) as $field) {
+            if (!in_array($field, $fields)) {
+                unset($user[$field]);
+            }
+        }
 
         return $this->query('POST', "updateUser/$uid", 'http_code', $user);
     }
@@ -627,7 +638,12 @@ class anewspring
      */
     public function addOrUpdateUser(int $uid, array $user): int
     {
-        unset($user['security']);
+        $fields = $this->user_fields('addOrUpdateUser');
+        foreach (array_keys($user) as $field) {
+            if (!in_array($field, $fields)) {
+                unset($user[$field]);
+            }
+        }
 
         return $this->query('POST', "addOrUpdateUser/$uid", 'http_code', $user);
     }
@@ -1185,6 +1201,70 @@ class anewspring
         return strpos($user_agent, $this->mobile_user_agent) !== false;
     }
 
+    /**
+     * Get user fields array
+     *
+     * @param  string  $function  Optional, Function name
+     * @return array
+     */
+    public function user_fields(string $function = ''): array
+    {
+        $fields = [
+            'userID',
+            'login',
+            'firstName',
+            'middleName',
+            'lastName',
+            'gender',
+            'title',
+            'initials',
+            'email',
+            'function',
+            'company',
+            'dateOfBirth',
+            'telephoneNumber',
+            'faxNumber',
+            'cellPhoneNumber',
+            'address',
+            'zip',
+            'residence',
+            'country',
+            'invoiceAddress',
+            'invoiceZip',
+            'invoiceResidence',
+            'invoiceCountry',
+            'custom1',
+            'custom2',
+            'custom3',
+            'custom4',
+            'custom5',
+            'locale',
+            'timeZoneGroup',
+            'timeZone',
+            'password',
+            'generatePassword',
+            'forcePasswordChange',
+            'notify',
+            'active',
+            'renewable',
+            'avatar',
+            'deleteAvatar',
+        ];
+        if ($function == 'addUser') {
+            $fields = array_merge($field, [
+                'role',
+            ]);
+        }
+        if ($function == 'updateUser' || $function == 'addOrUpdateUser') {
+            $fields = array_merge($field, [
+                'userUID',
+                'id',
+                'archived',
+            ]);
+        }
+
+        return $fields;
+    }
     /**
      * User status
      *
