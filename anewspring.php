@@ -1251,12 +1251,12 @@ class anewspring
             'deleteAvatar',
         ];
         if ($function == 'addUser') {
-            $fields = array_merge($field, [
+            $fields = array_merge($fields, [
                 'role',
             ]);
         }
         if ($function == 'updateUser' || $function == 'addOrUpdateUser') {
-            $fields = array_merge($field, [
+            $fields = array_merge($fields, [
                 'userUID',
                 'id',
                 'archived',
