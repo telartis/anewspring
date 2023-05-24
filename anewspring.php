@@ -6,7 +6,7 @@
  * @author      Jeroen de Jong <jeroen@telartis.nl>
  * @copyright   2021-2023 Telartis BV
  * @link        https://demo.anewspring.nl/apidocs
- * @version     5.3.6
+ * @version     5.4.1
  *
  *
  * Usage:
@@ -208,7 +208,7 @@ class anewspring
             $this->message = 'Error '.$path.' '.$result_string;
         }
 
-        [$result_type, $rkey, $rtype, $column] = explode(':', $result_type);
+        [$result_type, $rkey, $rtype, $column] = explode(':', $result_type.':::');
 
         if ($result_type == 'json' && $this->http_code == 200) {
             $result = json_decode($result_string, true);
@@ -590,11 +590,9 @@ class anewspring
      */
     public function addUser(int $uid, array $user): int
     {
-        $fields = $this->user_fields('addUser');
-        foreach (array_keys($user) as $field) {
-            if (!in_array($field, $fields)) {
-                unset($user[$field]);
-            }
+        $fields = $this->user_fields(__FUNCTION__);
+        foreach (array_keys($user) as $field) if (!in_array($field, $fields)) {
+            unset($user[$field]);
         }
 
         return $this->query('POST', "addUser/$uid", 'http_code', $user);
@@ -606,9 +604,13 @@ class anewspring
      * 200 success
      * 409 a user with the specified ID already exists | setting force password change is not allowed | user is archived
      *
-     * TBD FIX BUG: It is not possible to set the dateOfBirth to NULL.
-     * The dateOfBirth can be empty and it is not required to have a value,
-     * but once it has gotten a value it is not optional anymore and cannot be set to NULL again.
+     * dateOfBirth DATE-type:
+     * 1. DATE values are in 'YYYY-MM-DD' format.
+     * 2. The supported range is '1000-01-01' to '9999-12-31'.
+     * 3. DATE values can be an empty string, but not NULL. A NULL-value will not change the date value.
+     * 4. MONTH and DAY values should be valid, and not merely in the range 1 to 12 and 1 to 31, respectively.
+     *    Invalid dates such as '2004-04-31' or '2023-02-29' will give an response of 400 with the error message:
+     *    "FIELD does not contain an ISO8601 date value: VALUE"
      *
      * @param  integer  $uid   User ID
      * @param  array    $user  User Row
@@ -616,11 +618,9 @@ class anewspring
      */
     public function updateUser(int $uid, array $user): int
     {
-        $fields = $this->user_fields('updateUser');
-        foreach (array_keys($user) as $field) {
-            if (!in_array($field, $fields)) {
-                unset($user[$field]);
-            }
+        $fields = $this->user_fields(__FUNCTION__);
+        foreach (array_keys($user) as $field) if (!in_array($field, $fields)) {
+            unset($user[$field]);
         }
 
         return $this->query('POST', "updateUser/$uid", 'http_code', $user);
@@ -638,11 +638,9 @@ class anewspring
      */
     public function addOrUpdateUser(int $uid, array $user): int
     {
-        $fields = $this->user_fields('addOrUpdateUser');
-        foreach (array_keys($user) as $field) {
-            if (!in_array($field, $fields)) {
-                unset($user[$field]);
-            }
+        $fields = $this->user_fields(__FUNCTION__);
+        foreach (array_keys($user) as $field) if (!in_array($field, $fields)) {
+            unset($user[$field]);
         }
 
         return $this->query('POST', "addOrUpdateUser/$uid", 'http_code', $user);
@@ -1265,6 +1263,7 @@ class anewspring
 
         return $fields;
     }
+
     /**
      * User status
      *
@@ -1298,11 +1297,9 @@ class anewspring
     public function user_has_started(int $uid): bool
     {
         $result = false;
-        foreach ($this->getResults($uid) as $r) {
-            if ($r['startDate']) {
-                $result = true;
-                break;
-            }
+        foreach ($this->getResults($uid) as $r) if ($r['startDate']) {
+            $result = true;
+            break;
         }
 
         return $result;
@@ -1327,10 +1324,8 @@ class anewspring
     public function get_groups(int $uid): array
     {
         $result = [];
-        foreach ($this->all_groups() as $groupID) {
-            if ($this->groupUserExists($groupID, $uid)) {
-                $result[] = $groupID;
-            }
+        foreach ($this->all_groups() as $groupID) if ($this->groupUserExists($groupID, $uid)) {
+            $result[] = $groupID;
         }
 
         return $result;
