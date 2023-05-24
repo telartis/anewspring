@@ -328,10 +328,17 @@ class anewspring
     {
         $data_string = '';
         if ($data) {
-            // Convert booleans to string:
-            foreach ($data as $key => $val) if (is_bool($val)) {
-                $data[$key] = $val ? 'true' : 'false';
+            foreach ($data as $key => $val) {
+                // Convert booleans to string:
+                if (is_bool($val)) {
+                    $data[$key] = $val ? 'true' : 'false';
+                }
+                // Convert DATE-NULL-values to empty string:
+                if (in_array($key, ['dateOfBirth']) && is_null($val)) {
+                    $data[$key] = '';
+                }
             }
+
             // Some parameters are indicated as data type Array[string].
             // To send a parameter as an array, you can simply repeat the same parameter multiple times
             // with different values in the body of one API call.
