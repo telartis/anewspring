@@ -1,12 +1,12 @@
 <?php declare(strict_types=1);
 
 /**
- * Project:     aNewSpring API PHP Client
- * File:        anewspring.php
- * @author      Jeroen de Jong <jeroen@telartis.nl>
- * @copyright   2021-2023 Telartis BV
- * @link        https://demo.anewspring.nl/apidocs
- * @version     5.4.1
+ * Project:   aNewSpring API PHP Client
+ * File:      anewspring.php
+ * @author    Jeroen de Jong <jeroen@telartis.nl>
+ * @copyright 2021-2023 Telartis BV
+ * @link      https://demo.anewspring.com/apidocs
+ * @version   5.4.1
  *
  *
  * Usage:
@@ -22,7 +22,7 @@
  * clean_html(string $html): string
  * dbg($data, string $name = ''): string
  * hide_pass(string $text): string
- * mail_error($error, $content = ''): void
+ * mail_error(string $error, string $content = ''): void
  * log_entry(string $method, string $path, string $data_string, int $http_code, string $msg): array
  * log_error(string $method, string $path, string $data_string, int $http_code, string $msg): void, Log error message to $this->error_log
  * out(string $msg): void, Echoed message or added to $this->output
@@ -89,7 +89,6 @@
  * init_course_ids(): void, $this->course_ids filled
  * init_subscriptions(): void, $this->subscriptions filled
  *
- *
  */
 
 namespace telartis\anewspring;
@@ -97,7 +96,7 @@ namespace telartis\anewspring;
 class anewspring
 {
     public $api_key  = '';
-    public $base_url = 'https://demo.anewspring.nl/api';
+    public $base_url = 'https://demo.anewspring.com/api';
     public $log_file = '/var/log/anewspring.log'; // leave empty if you do not want logging
 
     public $mobile_user_agent = 'aNewSpring/APP_NAME/';
@@ -134,7 +133,7 @@ class anewspring
     /**
      * Query API
      *
-     * @link   https://support.anewspring.com/nl/articles/70412
+     * @link   https://support.anewspring.com/en/articles/70412
      *
      * @param  string   $method       HTTP verb to perform the request with: GET, POST, PUT, DELETE
      * @param  string   $path
@@ -167,6 +166,7 @@ class anewspring
         if (!empty($errmsg)) {
             $this->mail_error('Error '.$path.' '.$errmsg);
             $this->http_code = 500;
+            $result_string = false;
         } else {
             $url = $this->base_url.'/'.$path;
             $ch = curl_init($url);
@@ -182,7 +182,9 @@ class anewspring
             $result_string = curl_exec($ch);
             $this->info = (object) curl_getinfo($ch);
             if ($result_string === false) {
-                $result_string = 'curl_exec error: '.curl_error($ch).' ('.curl_errno($ch).')';
+                $curl_error = curl_error($ch);
+                $curl_errno = curl_errno($ch);
+                $result_string = "curl_exec error: $curl_error ($curl_errno)";
                 $this->mail_error('Error '.$path.' '.$result_string, $this->dbg($this->info, 'curl_getinfo'));
             }
             $this->http_code = (int) $this->info->http_code;
@@ -342,7 +344,7 @@ class anewspring
             // Some parameters are indicated as data type Array[string].
             // To send a parameter as an array, you can simply repeat the same parameter multiple times
             // with different values in the body of one API call.
-            // Source: https://support.anewspring.com/nl/articles/70408-api-de-apidocs-gebruiken
+            // Source: https://support.anewspring.com/en/articles/70408-api-using-apidocs
             // See for example addUserRoles: https://demo.anewspring.com/apidocs#!/users/addUserRoles
             $data_string = preg_replace(
                 '/%5B(?:[0-9]|[1-9][0-9]+)%5D=/',   // pattern
@@ -425,7 +427,7 @@ class anewspring
      * @param  string   $content  Optional, default ''
      * @return void
      */
-    public function mail_error($error, $content = ''): void
+    public function mail_error(string $error, string $content = ''): void
     {
         if (false) mail('webmaster@example.com', $error, $content);
     }
@@ -590,7 +592,6 @@ class anewspring
      * 200 success
      * 409 a user with the specified ID already exists | setting force password change is not allowed | user is archived
      *
-     *
      * @param  integer  $uid   User ID
      * @param  array    $user  User Row
      * @return integer  HTTP Code
@@ -614,7 +615,7 @@ class anewspring
      * dateOfBirth DATE-type:
      * 1. DATE values are in 'YYYY-MM-DD' format.
      * 2. The supported range is '1000-01-01' to '9999-12-31'.
-     * 3. DATE values can be an empty string, but not NULL. A NULL-value will not change the date value.
+     * 3. DATE values can be an empty string, but not 'NULL' or NULL. A NULL-value will not change the date value.
      * 4. MONTH and DAY values should be valid, and not merely in the range 1 to 12 and 1 to 31, respectively.
      *    Invalid dates such as '2004-04-31' or '2023-02-29' will give an response of 400 with the error message:
      *    "FIELD does not contain an ISO8601 date value: VALUE"
@@ -911,7 +912,7 @@ class anewspring
     /**
      * Get Single sign-on (SSO) token, this can be used to log in the user.
      *
-     * @link   https://support.anewspring.com/nl/articles/70423
+     * @link   https://support.anewspring.com/en/articles/70423
      *
      * @param  integer  $uid  User ID
      * @return string
@@ -973,7 +974,7 @@ class anewspring
      *
      * 404 no user exists with the specified ID, or the user is not subscribed to the course
      *
-     * @link   https://demo.anewspring.nl/apidocs#!/subscriptions/getResults
+     * @link   https://demo.anewspring.com/apidocs#!/subscriptions/getResults
      *
      * @param  integer  $uid        The ID of the user in the external system, which is shown as external ID in the platform.
      * @param  boolean  $asStudent  Optional, default TRUE. Indicates if the results should contain only the results the user
@@ -1113,7 +1114,7 @@ class anewspring
      * Set course permissions
      * This can be used to set the course permissions for a specific teacher.
      *
-     * @link https://support.anewspring.com/nl/articles/33194
+     * @link https://support.anewspring.com/en/articles/33194
      *
      * Onder Templates > Course > Begeleiders-tabblad zijn deze vijf permissions per teacher instelbaar:
      * CourseSettings                | Uitvoering instellingen | Begeleider mag instellingen van de uitvoering aanpassen.
@@ -1201,7 +1202,10 @@ class anewspring
      */
     public function is_mobile_app(): bool
     {
-        $user_agent = (string) filter_input(INPUT_SERVER, 'HTTP_USER_AGENT', FILTER_SANITIZE_STRING);
+        $user_agent = (string) filter_input(INPUT_SERVER, 'HTTP_USER_AGENT',
+            FILTER_DEFAULT,
+            FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH | FILTER_FLAG_STRIP_BACKTICK
+        );
 
         return strpos($user_agent, $this->mobile_user_agent) !== false;
     }
